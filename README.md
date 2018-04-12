@@ -1,13 +1,8 @@
-# getset
+# volatile_getset
 
-[![Build Status](https://travis-ci.org/Hoverbear/getset.svg?branch=master)](https://travis-ci.org/Hoverbear/getset)
-[![Build status](https://ci.appveyor.com/api/projects/status/w8v2poyjwsy5d05k?svg=true)](https://ci.appveyor.com/project/Hoverbear/getset)
+A procedural macro for generating volatile getters and setters on fields.
 
-Getset, we're ready to go!
-
-A procedural macro for generating the most basic getters and setters on fields.
-
-Getters are generated as `fn field(&self) -> &type`, while setters are generated as `fn field(&mut self, val: type)`.
+Getters are generated as `fn volatile_get_field(&self) -> type`, while setters are generated as `fn volatile_set_field(&mut self, val: type)`.
 
 These macros are not intended to be used on fields which require custom logic inside of their setters and getters. Just write your own in that case!
 
@@ -15,25 +10,24 @@ These macros are not intended to be used on fields which require custom logic in
 
 ```rust
 #[macro_use]
-extern crate getset;
+extern crate volatile_getset;
 
-#[derive(Getters, Setters, MutGetters, Default)]
+#[derive(VolatileGetters, VolatileSetters, Default)]
 pub struct Foo<T> where T: Copy + Clone + Default {
     /// Doc comments are supported!
     /// Multiline, even.
-    #[get] #[set] #[get_mut]
+    #[volatile_get] #[volatile_set]
     private: T,
 
     /// Doc comments are supported!
     /// Multiline, even.
-    #[get = "pub"] #[set = "pub"] #[get_mut = "pub"]
+    #[volatile_get = "pub"] #[volatile_set = "pub"]
     public: T,
 }
 
 fn main() {
     let mut foo = Foo::default();
-    foo.set_private(1);
-    (*foo.private_mut()) += 1;
-    assert_eq!(*foo.private(), 2);
+    foo.volatile_set_private(2);
+    assert_eq!(foo.volatile_get_private(), 2);
 }
 ```

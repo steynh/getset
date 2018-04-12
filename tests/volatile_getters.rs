@@ -1,5 +1,5 @@
 #[macro_use]
-extern crate getset;
+extern crate volatile_getset;
 
 use submodule::other::{Plain, Generic, Where};
 
@@ -7,15 +7,15 @@ use submodule::other::{Plain, Generic, Where};
 mod submodule {
     // For testing `pub(in super::other)`
     pub mod other {
-        #[derive(Getters, Default)]
+        #[derive(VolatileGetters, Default)]
         pub struct Plain {
             /// A doc comment.
             /// Multiple lines, even.
-            #[get]
+            #[volatile_get]
             private_accessible: usize,
             
             /// A doc comment.
-            #[get = "pub"]
+            #[volatile_get = "pub"]
             public_accessible: usize,
 
             // /// A doc comment.
@@ -31,15 +31,15 @@ mod submodule {
             // scope_accessible: usize,
         }
 
-        #[derive(Getters, Default)]
+        #[derive(VolatileGetters, Default)]
         pub struct Generic<T: Copy + Clone + Default> {
             /// A doc comment.
             /// Multiple lines, even.
-            #[get]
+            #[volatile_get]
             private_accessible: T,
             
             /// A doc comment.
-            #[get = "pub"]
+            #[volatile_get = "pub"]
             public_accessible: T,
 
             // /// A doc comment.
@@ -55,15 +55,15 @@ mod submodule {
             // scope_accessible: usize,
         }
 
-        #[derive(Getters, Default)]
+        #[derive(VolatileGetters, Default)]
         pub struct Where<T> where T: Copy + Clone + Default {
             /// A doc comment.
             /// Multiple lines, even.
-            #[get]
+            #[volatile_get]
             private_accessible: T,
             
             /// A doc comment.
-            #[get = "pub"]
+            #[volatile_get = "pub"]
             public_accessible: T,
 
             // /// A doc comment.
@@ -82,19 +82,19 @@ mod submodule {
         #[test]
         fn test_plain() {
             let val = Plain::default();
-            val.private_accessible();
+            val.volatile_get_private_accessible();
         }
 
         #[test]
         fn test_generic() {
             let val = Generic::<usize>::default();
-            val.private_accessible();
+            val.volatile_get_private_accessible();
         }
 
         #[test]
         fn test_where() {
             let val = Where::<usize>::default();
-            val.private_accessible();
+            val.volatile_get_private_accessible();
         }
     }
 }
@@ -102,17 +102,17 @@ mod submodule {
 #[test]
 fn test_plain() {
     let val = Plain::default();
-    val.public_accessible();
+    val.volatile_get_public_accessible();
 }
 
 #[test]
 fn test_generic() {
     let val = Generic::<usize>::default();
-    val.public_accessible();
+    val.volatile_get_public_accessible();
 }
 
 #[test]
 fn test_where() {
     let val = Where::<usize>::default();
-    val.public_accessible();
+    val.volatile_get_public_accessible();
 }
